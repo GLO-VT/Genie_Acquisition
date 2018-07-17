@@ -185,6 +185,8 @@ static void XferCallback(SapXferCallbackInfo *pInfo)
    double distx; ///distance from center, declared as double bc it is converted to degrees in future (often less than 1 )
    double disty;
    int x, y;
+   Point TL;
+   Point Br;
    Point framcenter; ///OpenCV variables for modification of Mat object 
    Rect bounding_rect;
    Point center;
@@ -192,6 +194,10 @@ static void XferCallback(SapXferCallbackInfo *pInfo)
    vector<Vec4i> hierarchy;
    framcenter.x = 640; ///this represents the true center of the fram if 1280x1024
    framcenter.y = 512; 
+   TL.x = framcenter.x - ((405 / 2) + 0.005/ 0.0000617284);
+   TL.y = framcenter.y + ((405 / 2) + 0.005/ 0.0000617284);
+   Br.x = framcenter.x + ((405 / 2) + 0.005/ 0.0000617284);
+   Br.y = framcenter.y - ((405 / 2) + 0.005/ 0.0000617284);
    // refresh view
    ///pView->Show();  no longer want to waste resources viewing with sapera window, using openCV window 
   
@@ -214,7 +220,7 @@ static void XferCallback(SapXferCallbackInfo *pInfo)
    /// GaussianBlur(Img, Img, Size(3, 3), 0, 0);
    ///This can be used to filter the image Size(x,x) changes the kernal size 
 
-   threshold(Img,Img, 80, 255, THRESH_BINARY); ///Threshold the gray (change 3rd parameter based on brightness of "sun")
+   threshold(Img,Img, 20, 255, THRESH_BINARY); ///Threshold the gray (change 3rd parameter based on brightness of "sun")
    findContours(Img, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_L1); /// Find the contours in the image
    
    for (int i = 0; i< contours.size(); i++) /// iterate through each contour. 
@@ -231,10 +237,14 @@ static void XferCallback(SapXferCallbackInfo *pInfo)
 	   }
    }
   
-   rectangle(Img, bounding_rect, Scalar(120,120 ,120), 5, 2, 0); ///draw a rectangle around the disk of the sun 
+   rectangle(Img, bounding_rect, Scalar(80,80 ,80), 5, 2, 0); ///draw a rectangle around the disk of the sun 
+   rectangle(Img, TL,Br, Scalar(200, 200, 200), 5, 2, 0); ///rectangle to show 0.1 deg
+
    center = (bounding_rect.br() + bounding_rect.tl())*0.5; ///find center of the circle (tl= topleft, br=botttomright)
    circle(Img, center, 5, Scalar(180, 180, 180), 2); /// draw center on sun
-   circle(Img, framcenter, 5, Scalar(210, 210, 210), 2); /// draw center of frame   
+   circle(Img, framcenter, 5, Scalar(100, 100, 100), 2); /// draw center of frame   
+
+  
    
    x = center.x;
    y = center.y;
@@ -245,10 +255,15 @@ static void XferCallback(SapXferCallbackInfo *pInfo)
    distx = x - framcenter.x;
    disty = y - framcenter.y;
 
+   distx *= 0.0000617284;  ///change pixel scaling (this is for .025/405 deg/pixel, default is .001 degree per pixel) 
+   disty *= 0.0000617284;
+
+   /*
    distx *= 0.001241;  ///change pixel scaling (this is for .53/427 deg/pixel, default is .001 degree per pixel) 
    disty *= 0.001241;
+   */
 
-   file << distx << "," << disty;
+   file << distx << "," << disty; ///write center location to file to be grabbed by python
    file.close();
 
    //cout << "Distance from center of Frame: " << (center.x - frame_center.x) << "," << (center.y - frame_center.y) << "\n";

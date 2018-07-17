@@ -1,2 +1,7 @@
-﻿  GrabCPP_2015.vcxproj -> C:\Program Files\Teledyne DALSA\Sapera\Examples\Classes\GrabConsole\Vc\Release64\GrabCPP.exe
+﻿  GrabCPP.cpp
+..\GrabCPP.cpp(197): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+..\GrabCPP.cpp(198): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+..\GrabCPP.cpp(199): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+..\GrabCPP.cpp(200): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+  GrabCPP_2015.vcxproj -> C:\Program Files\Teledyne DALSA\Sapera\Examples\Classes\GrabConsole\Vc\Release64\GrabCPP.exe
   GrabCPP_2015.vcxproj -> .\Release64\GrabCPP.pdb (Full PDB)
